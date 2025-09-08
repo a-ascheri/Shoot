@@ -39,9 +39,11 @@ public class CameraFollow : MonoBehaviour
         float distance = Vector2.Distance(player.position, Vector2.zero); // referencia 0,0
         float speed = playerRb != null ? playerRb.velocity.magnitude : 0f;
 
-        float targetSize = minSize + distance * distanceFactor + speed * speedFactor;
-        targetSize = Mathf.Clamp(targetSize, minSize, maxSize);
+    float targetSize = minSize + distance * distanceFactor + speed * speedFactor;
+    // Limitar el zoom máximo para que no se aleje demasiado
+    float zoomLimit = 25f; // Puedes ajustar este valor según tu preferencia
+    targetSize = Mathf.Clamp(targetSize, minSize, Mathf.Min(maxSize, zoomLimit));
 
-        Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, targetSize, zoomSpeed);
+    Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, targetSize, zoomSpeed);
     }
 }
