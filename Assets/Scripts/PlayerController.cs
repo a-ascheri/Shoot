@@ -11,6 +11,12 @@ public class PlayerController : MonoBehaviour
 
     private LineRenderer line; // para mostrar dirección
 
+    [Header("Efectos de Partículas")]
+    public GameObject shootParticlesPrefab;
+    public GameObject impactParticlesPrefab;
+
+    private bool hasLaunched = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -48,6 +54,12 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 direction = startPoint - endPoint; 
         rb.velocity = direction * launchPower;
+        hasLaunched = true;
+        // Instanciar partículas de disparo
+        if (shootParticlesPrefab != null)
+        {
+            Instantiate(shootParticlesPrefab, transform.position, Quaternion.identity);
+        }
     }
 
     void DrawLine(Vector2 start, Vector2 end)
@@ -60,5 +72,14 @@ public class PlayerController : MonoBehaviour
     void ClearLine()
     {
         line.positionCount = 0;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (hasLaunched && impactParticlesPrefab != null)
+        {
+            Instantiate(impactParticlesPrefab, transform.position, Quaternion.identity);
+            hasLaunched = false;
+        }
     }
 }
