@@ -76,10 +76,19 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (hasLaunched && impactParticlesPrefab != null)
+        if (impactParticlesPrefab != null)
         {
-            Instantiate(impactParticlesPrefab, transform.position, Quaternion.identity);
-            hasLaunched = false;
+            float impactSpeed = rb.velocity.magnitude;
+            GameObject impactObj = Instantiate(impactParticlesPrefab, transform.position, Quaternion.identity);
+            ParticleSystem ps = impactObj.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                int burstCount = Mathf.Clamp(Mathf.RoundToInt(impactSpeed * 10), 20, 50);
+                var main = ps.main;
+                main.startSize = Mathf.Clamp(impactSpeed * 0.05f, 0.1f, 0.5f);
+                main.startSpeed = Mathf.Clamp(impactSpeed * 1.5f, 2f, 10f);
+                ps.Emit(burstCount);
+            }
         }
     }
 }
