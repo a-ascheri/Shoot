@@ -67,6 +67,36 @@ public class PlayerController : MonoBehaviour
         line.positionCount = 2;
         line.SetPosition(0, start);
         line.SetPosition(1, end);
+
+        // Calcular fuerza
+        float force = (start - end).magnitude;
+        // Color final depende de la fuerza
+        Color endColor;
+        if (force < 2f)
+            endColor = Color.green;
+        else if (force < 4f)
+            endColor = Color.yellow;
+        else
+            endColor = Color.red;
+
+        Gradient gradient = new Gradient();
+        gradient.SetKeys(
+            new GradientColorKey[] {
+                new GradientColorKey(Color.green, 0f),
+                new GradientColorKey(endColor, 1f)
+            },
+            new GradientAlphaKey[] {
+                new GradientAlphaKey(1f, 0f),
+                new GradientAlphaKey(1f, 1f)
+            }
+        );
+        line.colorGradient = gradient;
+
+        // Forma cónica: ancho inicial pequeño, ancho final proporcional a la fuerza
+    float minWidth = 0.05f;
+    float maxWidth = Mathf.Clamp(force * 0.15f, 0.1f, 0.5f);
+    line.startWidth = maxWidth;
+    line.endWidth = minWidth;
     }
 
     void ClearLine()
@@ -75,23 +105,23 @@ public class PlayerController : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D collision)
-{
-    if (impactParticlesPrefab != null)
     {
-        float impactSpeed = rb.velocity.magnitude;
-        Vector2 normal = collision.contacts.Length > 0 ? collision.contacts[0].normal : Vector2.up;
-        float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
-        Quaternion rot = Quaternion.AngleAxis(angle - 90f, Vector3.forward);
-        GameObject impactObj = Instantiate(impactParticlesPrefab, transform.position, rot);
-        ParticleSystem ps = impactObj.GetComponent<ParticleSystem>();
-        if (ps != null)
+        if (impactParticlesPrefab != null)
         {
-            int burstCount = Mathf.Clamp(Mathf.RoundToInt(impactSpeed * 10), 20, 50);
-            var main = ps.main;
-            main.startSize = Mathf.Clamp(impactSpeed * 0.05f, 0.1f, 0.5f);
-            main.startSpeed = Mathf.Clamp(impactSpeed * 1.5f, 2f, 10f);
-            ps.Emit(burstCount);
+            float impactSpeed = rb.velocity.magnitude;
+            Vector2 normal = collision.contacts.Length > 0 ? collision.contacts[0].normal : Vector2.up;
+            float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
+            Quaternion rot = Quaternion.AngleAxis(angle - 90f, Vector3.forward);
+            GameObject impactObj = Instantiate(impactParticlesPrefab, transform.position, rot);
+            ParticleSystem ps = impactObj.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                int burstCount = Mathf.Clamp(Mathf.RoundToInt(impactSpeed * 10), 20, 50);
+                var main = ps.main;
+                main.startSize = Mathf.Clamp(impactSpeed * 0.05f, 0.1f, 0.5f);
+                main.startSpeed = Mathf.Clamp(impactSpeed * 1.5f, 2f, 10f);
+                ps.Emit(burstCount);
+            }
         }
     }
-}
 }
