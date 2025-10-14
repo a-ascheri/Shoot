@@ -2,14 +2,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public PlayerPowerBar powerBar;
     public float launchPower = 10f;
     private Rigidbody2D rb;
 
     private Vector2 startPoint;
     private Vector2 endPoint;
     private bool isDragging = false;
-
-    private LineRenderer line; // para mostrar dirección
 
     [Header("Efectos de Partículas")]
     public GameObject shootParticlesPrefab;
@@ -20,8 +19,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        line = GetComponent<LineRenderer>();
-        line.positionCount = 0; // arranca sin nada
     }
 
     void Update()
@@ -37,7 +34,8 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButton(0) && isDragging)
         {
             Vector2 currentPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            DrawLine(startPoint, currentPoint);
+            float force = (startPoint - currentPoint).magnitude;
+            powerBar.DrawBar(startPoint, currentPoint, force);
         }
 
         // soltar
@@ -45,7 +43,7 @@ public class PlayerController : MonoBehaviour
         {
             endPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Launch();
-            ClearLine();
+            powerBar.ClearBar();
             isDragging = false;
         }
     }
@@ -60,48 +58,6 @@ public class PlayerController : MonoBehaviour
         {
             Instantiate(shootParticlesPrefab, transform.position, Quaternion.identity);
         }
-    }
-
-    void DrawLine(Vector2 start, Vector2 end)
-    {
-        line.positionCount = 2;
-        line.SetPosition(0, start);
-        line.SetPosition(1, end);
-
-        // Calcular fuerza
-        float force = (start - end).magnitude;
-        // Color final depende de la fuerza
-        Color endColor;
-        if (force < 2f)
-            endColor = Color.green;
-        else if (force < 4f)
-            endColor = Color.yellow;
-        else
-            endColor = Color.red;
-
-        Gradient gradient = new Gradient();
-        gradient.SetKeys(
-            new GradientColorKey[] {
-                new GradientColorKey(Color.green, 0f),
-                new GradientColorKey(endColor, 1f)
-            },
-            new GradientAlphaKey[] {
-                new GradientAlphaKey(1f, 0f),
-                new GradientAlphaKey(1f, 1f)
-            }
-        );
-        line.colorGradient = gradient;
-
-        // Forma cónica: ancho inicial pequeño, ancho final proporcional a la fuerza
-    float minWidth = 0.05f;
-    float maxWidth = Mathf.Clamp(force * 0.15f, 0.1f, 0.5f);
-    line.startWidth = maxWidth;
-    line.endWidth = minWidth;
-    }
-
-    void ClearLine()
-    {
-        line.positionCount = 0;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
