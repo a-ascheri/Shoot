@@ -2,18 +2,14 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public PlayerParticles particles;
     public PlayerPowerBar powerBar;
     public float launchPower = 10f;
+    
     private Rigidbody2D rb;
-
     private Vector2 startPoint;
     private Vector2 endPoint;
     private bool isDragging = false;
-
-    [Header("Efectos de Partículas")]
-    public GameObject shootParticlesPrefab;
-    public GameObject impactParticlesPrefab;
-
     private bool hasLaunched = false;
 
     void Start()
@@ -54,30 +50,16 @@ public class PlayerController : MonoBehaviour
         rb.velocity = direction * launchPower;
         hasLaunched = true;
         // Instanciar partículas de disparo
-        if (shootParticlesPrefab != null)
-        {
-            Instantiate(shootParticlesPrefab, transform.position, Quaternion.identity);
-        }
+        if (particles != null)
+            particles.PlayShootParticles(transform.position);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (impactParticlesPrefab != null)
+        if (particles != null)
         {
-            float impactSpeed = rb.velocity.magnitude;
             Vector2 normal = collision.contacts.Length > 0 ? collision.contacts[0].normal : Vector2.up;
-            float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
-            Quaternion rot = Quaternion.AngleAxis(angle - 90f, Vector3.forward);
-            GameObject impactObj = Instantiate(impactParticlesPrefab, transform.position, rot);
-            ParticleSystem ps = impactObj.GetComponent<ParticleSystem>();
-            if (ps != null)
-            {
-                int burstCount = Mathf.Clamp(Mathf.RoundToInt(impactSpeed * 10), 20, 50);
-                var main = ps.main;
-                main.startSize = Mathf.Clamp(impactSpeed * 0.05f, 0.1f, 0.5f);
-                main.startSpeed = Mathf.Clamp(impactSpeed * 1.5f, 2f, 10f);
-                ps.Emit(burstCount);
-            }
+            particles.PlayImpactParticles(transform.position, rb.velocity, normal);
         }
     }
 }

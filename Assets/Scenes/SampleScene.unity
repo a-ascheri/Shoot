@@ -242,6 +242,8 @@ GameObject:
   - component: {fileID: 906807740}
   - component: {fileID: 906807741}
   - component: {fileID: 906807742}
+  - component: {fileID: 906807743}
+  - component: {fileID: 906807744}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -375,6 +377,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3789f228caa126f4fa8acbec178e887d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particles: {fileID: 906807744}
+  powerBar: {fileID: 906807743}
   launchPower: 10
   shootParticlesPrefab: {fileID: 1574214175402916978, guid: 89fbab6a93fc00141bf7456185bc1714, type: 3}
   impactParticlesPrefab: {fileID: 1953336771323734243, guid: 38aeefb78063a2141961ec3b4667a4e4, type: 3}
@@ -398,7 +402,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -419,9 +423,7 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -493,6 +495,34 @@ MonoBehaviour:
   maxX: 1000
   minY: -100
   maxY: 500
+--- !u!114 &906807743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906807735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f713cff5f0a0cbc48aab7c0a8832f662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  line: {fileID: 906807741}
+  maxForce: 8
+--- !u!114 &906807744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906807735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9218f6b578754d64db03e669c3ebf128, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shootParticlesPrefab: {fileID: 1574214175402916978, guid: 89fbab6a93fc00141bf7456185bc1714, type: 3}
+  impactParticlesPrefab: {fileID: 1953336771323734243, guid: 38aeefb78063a2141961ec3b4667a4e4, type: 3}
 --- !u!1 &1320263726
 GameObject:
   m_ObjectHideFlags: 0
